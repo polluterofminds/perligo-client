@@ -41,9 +41,6 @@ const SignInForm = ({ login }) => {
     }
   };
 
-  const handleTerms = e =>
-    setFormData({ ...formData, terms: e.target.checked });
-
   return (
     <form onSubmit={onSubmitLogin} noValidate autoComplete="off">
       <div>

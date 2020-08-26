@@ -9,8 +9,10 @@ import {
   LOGIN_FAIL,
   LOGOUT,
   CLEAR_PROFILE,
+  EMAIL_NOT_VERIFIED
 } from "../actions/types";
 import setAuthToken from "../utils/setAuthToken";
+import jwt from 'jsonwebtoken';
 
 const AUTH_ENDPOINT = "/api/v1/auth";
 
@@ -71,8 +73,7 @@ export const register = ({ firstName, lastName, email, password }) => async (
     });
 
     // dispatch(loadUser());
-  } catch (error) {
-    console.log(error);
+  } catch (error) {    
     dispatch(setAlert(error.msg, "error"));
 
     dispatch({
@@ -98,7 +99,23 @@ export const login = ({email, password}) => async (dispatch) => {
         }
         }
       `,
-    });
+    }, config);
+    
+    const token = res.data.data.logUserIn.body;
+    localStorage.setItem('token', token);
+    //  Decode JWT: 
+    const decoded = jwt.decode(token);
+    
+    const { user } = decoded;
+    console.log(user)
+
+    if(!user.emailVerified) {
+      dispatch({
+        type: EMAIL_NOT_VERIFIED, 
+        payload: user
+      })
+    }
+
     dispatch({
       type: LOGIN_SUCCESS,
       payload: res.data,
