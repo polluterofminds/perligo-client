@@ -19,19 +19,35 @@ const AUTH_ENDPOINT = "/api/v1/auth";
 const ENDPOINT = "http://localhost:4000";
 
 //  Load User
-export const loadUser = () => async (dispatch) => {
+export const checkSession = () => async (dispatch) => {
   const token = localStorage.token;
   if (token) {
     setAuthToken(token);
   }
 
   try {
-    const res = await axios.get(AUTH_ENDPOINT);
-
-    dispatch({
-      type: USER_LOADED,
-      payload: res.data,
+    const res = await axios.post(ENDPOINT, {
+      query: `mutation {
+          checkSession {
+          message
+        }
+      }
+    `,
     });
+    if(res.data.errors) {
+      dispatch({
+        type: AUTH_ERROR,
+      });
+    } else {
+      const decoded = jwt.decode(token);
+    
+      const { user } = decoded;
+
+      dispatch({
+        type: USER_LOADED,
+        payload: { user, token },
+      });
+    }
   } catch (error) {
     console.log(error);
     dispatch({
@@ -71,8 +87,6 @@ export const register = ({ firstName, lastName, email, password }) => async (
       type: REGISTER_SUCCESS,
       payload: res.data,
     });
-
-    // dispatch(loadUser());
   } catch (error) {    
     dispatch(setAlert(error.msg, "error"));
 
@@ -102,26 +116,22 @@ export const login = ({email, password}) => async (dispatch) => {
     }, config);
     
     const token = res.data.data.logUserIn.body;
-    localStorage.setItem('token', token);
     //  Decode JWT: 
     const decoded = jwt.decode(token);
     
     const { user } = decoded;
-    console.log(user)
 
     if(!user.emailVerified) {
       dispatch({
         type: EMAIL_NOT_VERIFIED, 
-        payload: user
+        payload: { user, token }
       })
+    } else {
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: { user, token },
+      });
     }
-
-    dispatch({
-      type: LOGIN_SUCCESS,
-      payload: res.data,
-    });
-
-    dispatch(loadUser());
   } catch (error) {
     dispatch(setAlert(error.msg, "error"));
 
@@ -130,6 +140,28 @@ export const login = ({email, password}) => async (dispatch) => {
     });
   }
 };
+
+export const resendVerificationEmail = (token) => async (dispatch) => {
+  try {
+    const res = await axios.post(ENDPOINT, {
+      query: `mutation {
+        resendVerification(token:"${token}") {
+          message
+          body
+        }
+        }
+      `,
+    });
+    
+    if (res.data.errors) {
+      throw new Error('trouble sending email')
+    }
+
+    return res;
+  } catch (error) {
+    dispatch(setAlert(error.msg, "error"));
+  }
+}
 
 //  Logout / Clear Profile
 export const logout = () => (dispatch) => {

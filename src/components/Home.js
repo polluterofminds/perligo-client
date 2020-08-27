@@ -1,11 +1,28 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import VerifyEmail from './Auth/VerifyEmail';
 
-const Home = () => {
-  return (
-    <div>
-      Verify Email
-    </div>
-  )
+const Home = ({ auth: { emailVerified } }) => {
+  if(emailVerified) {
+    return (
+      <div>
+        Let's get started
+      </div>
+    )
+  } else {
+    return (
+      <VerifyEmail />
+    )
+  }
 }
 
-export default Home;
+Home.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps)(Home);

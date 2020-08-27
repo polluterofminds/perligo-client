@@ -8,7 +8,7 @@ import Home from './components/Home';
 import { Provider } from "react-redux";
 import store from "./store";
 import setAuthToken from "./utils/setAuthToken";
-import { loadUser } from './actions/auth';
+import { checkSession } from './actions/auth';
 
 const token = localStorage.token;
 if(token) {
@@ -17,7 +17,7 @@ if(token) {
 
 const App = () => {
   useEffect(() => {
-    store.dispatch(loadUser());
+    store.dispatch(checkSession());
   }, []);
   return (
     <Provider store={store}>

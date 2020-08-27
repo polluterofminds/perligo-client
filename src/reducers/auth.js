@@ -5,12 +5,14 @@ import {
   AUTH_ERROR, 
   LOGIN_SUCCESS, 
   LOGIN_FAIL, 
-  LOGOUT
+  LOGOUT, 
+  EMAIL_NOT_VERIFIED
 } from '../actions/types';
 
 const initialState = {
   token: localStorage.getItem('token'), 
   isAuthenticated: null, 
+  emailVerified: false,
   loading: true, 
   user: null
 };
@@ -23,15 +25,25 @@ export default function(state = initialState, action) {
         ...state, 
         isAuthenticated: true, 
         loading: false, 
-        user: payload
+        token: payload.token,
+        user: payload.user
       }
     case REGISTER_SUCCESS: 
+      return {
+        ...state, 
+        payload,
+        isAuthenticated: true, 
+        emailVerified: false
+      }
     case LOGIN_SUCCESS:
       localStorage.setItem('token', payload.token);
       return {
         ...state, 
         payload, 
-        isAuthenticated: true
+        user: payload.user, 
+        token: payload.token,
+        isAuthenticated: true, 
+        emailVerified: payload.user.emailVerified
       }
     case REGISTER_FAIL: 
     case AUTH_ERROR: 
@@ -43,6 +55,16 @@ export default function(state = initialState, action) {
         token: null,
         isAuthenticated: false, 
         loading: false
+      }
+    case EMAIL_NOT_VERIFIED: 
+      localStorage.setItem('token', payload.token);
+      return {
+        ...state, 
+        user: payload.user,
+        token: payload.token,
+        isAuthenticated: true, 
+        loading: false, 
+        emailVerified: false
       }
     default: 
       return state
