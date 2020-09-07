@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { TextField, makeStyles, createStyles, FormControlLabel, Radio, Button, LinearProgress } from "@material-ui/core";
+import { TextField, makeStyles, createStyles, Button, LinearProgress } from "@material-ui/core";
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { AccountCircle, Mail, Lock } from '@material-ui/icons';
-import { register, login } from "../../actions/auth";
+import { Mail, Lock } from '@material-ui/icons';
+import { login } from "../../actions/auth";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 

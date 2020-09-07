@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect } from 'react';
-import { BrowserRouter as Router, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.css";
 import PrivateRoute from './components/PrivateRoute';
 import Alert from './components/Alert';
 import Home from './components/Home';
+import Verify from './components/Verify';
 //  Redux
 import { Provider } from "react-redux";
 import store from "./store";
@@ -29,7 +30,7 @@ const App = () => {
             <section>
               <Switch>
                 <PrivateRoute exact path='/' component={Home} />
-                {/* <Route exact path='/welcome' component={Welcome} /> */}
+                <Route exact path='/verify' component={Verify} />
               </Switch>
             </section>
           </Fragment>

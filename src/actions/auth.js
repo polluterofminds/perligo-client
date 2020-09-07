@@ -9,12 +9,11 @@ import {
   LOGIN_FAIL,
   LOGOUT,
   CLEAR_PROFILE,
-  EMAIL_NOT_VERIFIED
+  EMAIL_NOT_VERIFIED, 
+  EMAIL_VERIFIED
 } from "../actions/types";
 import setAuthToken from "../utils/setAuthToken";
 import jwt from 'jsonwebtoken';
-
-const AUTH_ENDPOINT = "/api/v1/auth";
 
 const ENDPOINT = "http://localhost:4000";
 
@@ -42,7 +41,7 @@ export const checkSession = () => async (dispatch) => {
       const decoded = jwt.decode(token);
     
       const { user } = decoded;
-
+      
       dispatch({
         type: USER_LOADED,
         payload: { user, token },
@@ -60,11 +59,6 @@ export const checkSession = () => async (dispatch) => {
 export const register = ({ firstName, lastName, email, password }) => async (
   dispatch
 ) => {
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
   try {
     const res = await axios.post(ENDPOINT, {
       query: `mutation {
@@ -158,6 +152,38 @@ export const resendVerificationEmail = (token) => async (dispatch) => {
     }
 
     return res;
+  } catch (error) {
+    dispatch(setAlert(error.msg, "error"));
+  }
+}
+
+export const verifyEmail = (token) => async (dispatch) => {
+  try {
+    const res = await axios.post(ENDPOINT, {
+      query: `mutation {
+        verifyEmail(token:"${token}") {
+          message
+          body
+        }
+        }
+      `,
+    });
+
+    if (res.data.errors) {
+      throw new Error('trouble verifying email')
+    }
+
+    const newToken = res.data.data.verifyEmail.body;
+    //  Decode JWT: 
+    const decoded = jwt.decode(newToken);
+    
+    const { user } = decoded;
+    dispatch({
+      type: EMAIL_VERIFIED, 
+      payload: {user, token: newToken}
+    });
+    setTimeout(window.location.replace('/'), 2000)
+    
   } catch (error) {
     dispatch(setAlert(error.msg, "error"));
   }

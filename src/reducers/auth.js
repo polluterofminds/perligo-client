@@ -6,7 +6,8 @@ import {
   LOGIN_SUCCESS, 
   LOGIN_FAIL, 
   LOGOUT, 
-  EMAIL_NOT_VERIFIED
+  EMAIL_NOT_VERIFIED,
+  EMAIL_VERIFIED
 } from '../actions/types';
 
 const initialState = {
@@ -26,6 +27,7 @@ export default function(state = initialState, action) {
         isAuthenticated: true, 
         loading: false, 
         token: payload.token,
+        emailVerified: payload.user.emailVerified,
         user: payload.user
       }
     case REGISTER_SUCCESS: 
@@ -36,6 +38,7 @@ export default function(state = initialState, action) {
         emailVerified: false
       }
     case LOGIN_SUCCESS:
+    case EMAIL_VERIFIED: 
       localStorage.setItem('token', payload.token);
       return {
         ...state, 
