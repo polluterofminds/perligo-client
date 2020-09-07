@@ -48,7 +48,6 @@ export const checkSession = () => async (dispatch) => {
       });
     }
   } catch (error) {
-    console.log(error);
     dispatch({
       type: AUTH_ERROR,
     });
@@ -108,6 +107,10 @@ export const login = ({email, password}) => async (dispatch) => {
         }
       `,
     }, config);
+
+    if (res.data.errors) {
+      throw new Error('Invalid password/email')
+    }
     
     const token = res.data.data.logUserIn.body;
     //  Decode JWT: 
@@ -127,7 +130,7 @@ export const login = ({email, password}) => async (dispatch) => {
       });
     }
   } catch (error) {
-    dispatch(setAlert(error.msg, "error"));
+    dispatch(setAlert(error.message, "error"));
 
     dispatch({
       type: LOGIN_FAIL,

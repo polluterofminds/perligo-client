@@ -37,7 +37,6 @@ const VerifyEmail = ({ resendVerificationEmail }) => {
       await resendVerificationEmail(token);
       setVerificationResent(true);
     } catch (error) {
-      console.log(error)
       setAlert('Trouble resending email verification', 'error');
     }
   }

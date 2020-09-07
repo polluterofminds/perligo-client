@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.css";
 import PrivateRoute from './components/PrivateRoute';
-import Alert from './components/Alert';
+import Message from './components/Message';
 import Home from './components/Home';
 import Verify from './components/Verify';
 //  Redux
@@ -22,11 +22,10 @@ const App = () => {
   }, []);
   return (
     <Provider store={store}>
-      <Alert />
+      <Message />
       <Fragment>
         <Router>
           <Fragment>
-            {/* <PrivateRoute path='/' component={Navbar} /> */}
             <section>
               <Switch>
                 <PrivateRoute exact path='/' component={Home} />

@@ -2,13 +2,12 @@ import React from 'react';
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import VerifyEmail from './Auth/VerifyEmail';
+import Feed from '../components/Feed/index';
 
 const Home = ({ auth: { emailVerified } }) => {
   if(emailVerified) {
     return (
-      <div>
-        Let's get started
-      </div>
+      <Feed />
     )
   } else {
     return (

@@ -41,8 +41,10 @@ const SignUpForm = ({ register, login }) => {
     e.preventDefault();
     if (password !== password2) {
       console.log("Passwords do not match", "error");
+      //  @TODO display error
     } else if (!terms) {
       console.log("You must agree to the terms", "error");
+      //  @TODO display error
     } else {
       setLoading(true);
       register({ firstName: fName, lastName: lName, email, password });
